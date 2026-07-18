@@ -17,7 +17,6 @@ suite =
                 , ( " 123", SucceedsWith (VNumber 123) )
                 , ( "  123", SucceedsWith (VNumber 123) )
                 , ( "123abc", SyntaxError )
-                , ( "onetwothree", SyntaxError )
 
                 -- Difference expressions
                 , ( "-(456,123)", SucceedsWith (VNumber 333) )

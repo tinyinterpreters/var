@@ -29,6 +29,7 @@ expr =
         , diffExpr
         , zeroExpr
         , ifExpr
+        , varExpr
         ]
 
 
@@ -71,3 +72,21 @@ ifExpr =
         |= P.lazy (\_ -> expr)
         |. L.keyword "else"
         |= P.lazy (\_ -> expr)
+
+
+varExpr : Parser Expr
+varExpr =
+    P.map Var (L.id keywords)
+
+
+keywords : List String
+keywords =
+    --
+    -- Remember to update this list of keywords anytime you
+    -- introduce new reserved words into the language.
+    --
+    [ "else"
+    , "if"
+    , "then"
+    , "zero"
+    ]

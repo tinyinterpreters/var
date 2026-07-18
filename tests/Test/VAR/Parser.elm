@@ -18,7 +18,6 @@ suite =
                 , ( " 123", Just (Program (Const 123)) )
                 , ( "  123", Just (Program (Const 123)) )
                 , ( "123abc", Nothing )
-                , ( "onetwothree", Nothing )
 
                 -- Difference expressions
                 , ( "-(456,123)", Just (Program (Diff (Const 456) (Const 123))) )
@@ -83,5 +82,13 @@ suite =
                 --- The consequent would evaluate to a number
                 --- The alternative would evaluate to a Boolean
                 , ( "if zero?(0) then 2 else zero?(3)", Just (Program (If (Zero (Const 0)) (Const 2) (Zero (Const 3)))) )
+
+                -- Variables
+                , ( "onetwothree", Just (Program (Var "onetwothree")) )
+                , ( "else", Nothing )
+                , ( "if", Nothing )
+                , ( "let", Just (Program (Var "let")) )
+                , ( "then", Nothing )
+                , ( "zero", Nothing )
                 ]
         ]
