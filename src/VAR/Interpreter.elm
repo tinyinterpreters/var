@@ -79,6 +79,9 @@ runExpr expr =
                         evalIf vCondition consequent alternative
                     )
 
+        Var _ ->
+            Ok <| VNumber 0
+
 
 evalDiff : Value -> Value -> Result RuntimeError Value
 evalDiff va vb =
