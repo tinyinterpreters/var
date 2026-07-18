@@ -1,4 +1,4 @@
-module IF.Interpreter exposing
+module VAR.Interpreter exposing
     ( Error(..)
     , RuntimeError(..)
     , Type(..)
@@ -6,8 +6,8 @@ module IF.Interpreter exposing
     , run
     )
 
-import IF.AST as AST exposing (..)
-import IF.Parser as P
+import VAR.AST as AST exposing (..)
+import VAR.Parser as P
 
 
 type Value

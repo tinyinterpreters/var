@@ -1,4 +1,4 @@
-module IF.AST exposing
+module VAR.AST exposing
     ( Expr(..)
     , Number
     , Program(..)
