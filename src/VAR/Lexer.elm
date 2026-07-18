@@ -1,6 +1,7 @@
-module VAR.Lexer exposing (digits, keyword, spaces, symbol)
+module VAR.Lexer exposing (digits, id, keyword, spaces, symbol)
 
 import Parser as P exposing ((|.), (|=), Parser)
+import Set exposing (Set)
 
 
 digits : Parser Int
@@ -16,6 +17,16 @@ chompOneOrMore isGood =
     P.succeed ()
         |. P.chompIf isGood
         |. P.chompWhile isGood
+
+
+id : List String -> Parser String
+id keywords =
+    lexeme <|
+        P.variable
+            { start = Char.isLower
+            , inner = Char.isLower
+            , reserved = Set.fromList keywords
+            }
 
 
 keyword : String -> Parser ()

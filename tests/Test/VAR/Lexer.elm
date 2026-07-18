@@ -20,6 +20,7 @@ suite =
                 ]
         , symbolSuite
         , keywordSuite
+        , idSuite
         ]
 
 
@@ -82,3 +83,19 @@ keywordSuite =
                 , ( " zero?", Nothing )
                 ]
         ]
+
+
+idSuite : Test
+idSuite =
+    let
+        id : Parser String
+        id =
+            L.id [ "let", "zero" ]
+    in
+    describe "id" <|
+        List.map (testValue <| P.run id)
+            [ ( "x", Just "x" )
+            , ( "letter", Just "letter" )
+            , ( "let", Nothing )
+            , ( "zero", Nothing )
+            ]
