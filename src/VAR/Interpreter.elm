@@ -7,6 +7,7 @@ module VAR.Interpreter exposing
     )
 
 import VAR.AST as AST exposing (..)
+import VAR.Env as Env
 import VAR.Parser as P
 
 
@@ -25,6 +26,7 @@ type RuntimeError
         { expected : List Type
         , actual : List Type
         }
+    | IdentifierNotFound Id
 
 
 type Type
@@ -45,20 +47,32 @@ run input =
 
 runProgram : AST.Program -> Result RuntimeError Value
 runProgram (Program expr) =
-    runExpr expr
+    runExpr expr initEnv
 
 
-runExpr : Expr -> Result RuntimeError Value
-runExpr expr =
+type alias Env =
+    Env.Env Id Value
+
+
+initEnv : Env
+initEnv =
+    Env.empty
+        |> Env.extend "x" (VNumber 10)
+        |> Env.extend "v" (VNumber 5)
+        |> Env.extend "i" (VNumber 1)
+
+
+runExpr : Expr -> Env -> Result RuntimeError Value
+runExpr expr env =
     case expr of
         Const n ->
             Ok <| VNumber n
 
         Diff a b ->
-            runExpr a
+            runExpr a env
                 |> Result.andThen
                     (\va ->
-                        runExpr b
+                        runExpr b env
                             |> Result.andThen
                                 (\vb ->
                                     evalDiff va vb
@@ -66,21 +80,26 @@ runExpr expr =
                     )
 
         Zero a ->
-            runExpr a
+            runExpr a env
                 |> Result.andThen
                     (\va ->
                         evalZero va
                     )
 
         If condition consequent alternative ->
-            runExpr condition
+            runExpr condition env
                 |> Result.andThen
                     (\vCondition ->
-                        evalIf vCondition consequent alternative
+                        evalIf vCondition consequent alternative env
                     )
 
-        Var _ ->
-            Ok <| VNumber 0
+        Var name ->
+            case Env.lookup name env of
+                Just value ->
+                    Ok value
+
+                Nothing ->
+                    Err <| IdentifierNotFound name
 
 
 evalDiff : Value -> Value -> Result RuntimeError Value
@@ -111,14 +130,14 @@ evalZero va =
                     }
 
 
-evalIf : Value -> Expr -> Expr -> Result RuntimeError Value
-evalIf vCondition consequent alternative =
+evalIf : Value -> Expr -> Expr -> Env -> Result RuntimeError Value
+evalIf vCondition consequent alternative env =
     case vCondition of
         VBool True ->
-            runExpr consequent
+            runExpr consequent env
 
         VBool False ->
-            runExpr alternative
+            runExpr alternative env
 
         _ ->
             Err <|

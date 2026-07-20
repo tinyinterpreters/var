@@ -114,6 +114,11 @@ suite =
 
                 --- Verify that the unselected then branch is not evaluated
                 , ( "if zero?(1) then -(zero?(0), 1) else 3", SucceedsWith (VNumber 3) )
+
+                -- Variables
+                , ( "x", SucceedsWith (VNumber 10) )
+                , ( "if zero?(-(5, v)) then i else v", SucceedsWith (VNumber 1) )
+                , ( "y", RuntimeError <| I.IdentifierNotFound "y" )
                 ]
         ]
 
