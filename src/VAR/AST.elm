@@ -1,5 +1,6 @@
 module VAR.AST exposing
     ( Expr(..)
+    , Id
     , Number
     , Program(..)
     )
