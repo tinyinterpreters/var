@@ -1,15 +1,15 @@
-# IF
+# VAR
 
-A tiny interpreter in Elm that adds conditional expressions and introduces selective evaluation.
+A tiny interpreter in Elm that adds variable expressions and environments, showing how variable lookup makes evaluation depend on context.
 
-IF builds on [ZERO](https://github.com/tinyinterpreters/zero) by turning Boolean values from results into decisions.
+VAR builds on [IF](https://blog.tinyinterpreters.dev/posts/if) by allowing programs to refer to predefined values by name.
 
-Read [IF: Adding Conditional Expressions to a Tiny Interpreter in Elm](https://blog.tinyinterpreters.dev/posts/if) for a guided explanation of how it works.
+Read [VAR: Adding Variables and Environments to a Tiny Interpreter in Elm](https://blog.tinyinterpreters.dev/posts/var) for a guided explanation of how it works.
 
 ```mermaid
 flowchart TD
-    A["if zero?(0) then 2 else 3"] -->|parse| B["Program (If (Zero (Const 0)) (Const 2) (Const 3))"]
-    B -->|runProgram| C["VNumber 2"]
+    A["x"] -->|parse| B["Program (Var &quot;x&quot;)"]
+    B -->|runProgram| C["VNumber 10"]
 ```
 
 ## Usage
@@ -26,64 +26,59 @@ elm repl
 Import the interpreter and run a program:
 
 ```elm
-import IF.Interpreter as I
+import VAR.Interpreter as I
 
-I.run "if zero?(0) then 2 else 3"
--- Ok (VNumber 2)
+I.run "x"
+-- Ok (VNumber 10)
 ```
 
 ## Language
 
-IF supports non-negative integer constants:
+VAR supports the constants, difference expressions, `zero?` expressions, and conditional expressions introduced by the previous interpreters.
+
+It also adds variable expressions. An identifier contains one or more lowercase letters:
 
 ```txt
-123
+x
+value
+onetwothree
 ```
 
-Difference expressions:
+The words `if`, `then`, and `else` are reserved and cannot be used as variable names.
 
-```txt
--(5, 3)
-```
-
-The `zero?` predicate:
-
-```txt
-zero?(0)
-```
-
-And conditional expressions:
-
-```txt
-if zero?(0) then 2 else 3
-```
-
-A conditional expression evaluates its condition first. The condition must produce a Boolean value; otherwise, evaluation fails with a runtime type error.
-
-If the condition evaluates to `true`, the then branch is evaluated. If it evaluates to `false`, the else branch is evaluated.
-
-The two branches do not need to produce the same kind of value.
-
-## Conditional expressions
-
-The main change in IF is that the interpreter cannot evaluate every subexpression before deciding what to do.
-
-The condition is evaluated first, but the two branches remain as expressions:
+Variables can also appear inside larger expressions:
 
 ```elm
-evalIf : Value -> Expr -> Expr -> Result RuntimeError Value
+I.run "if zero?(-(5, v)) then i else v"
+-- Ok (VNumber 1)
 ```
 
-The resulting Boolean value selects which branch is passed to the evaluator. Only the selected branch is evaluated; the other branch remains unevaluated.
+Only names present in the initial environment evaluate successfully. A valid identifier that is not present in the environment produces an identifier-not-found runtime error.
 
-For example:
+## Variables and environments
+
+The AST for a variable expression stores the name being referenced:
+
+```elm
+Var "x"
+```
+
+It does not store the value associated with that name. The evaluator finds the value by looking up the name in an environment.
+
+VAR evaluates programs using this initial environment:
 
 ```txt
-if zero?(0) then 2 else -(zero?(0), 1)
+x ↦ VNumber 10
+v ↦ VNumber 5
+i ↦ VNumber 1
 ```
 
-The else branch would produce a runtime type error if evaluated. Because the condition evaluates to `true`, only the then branch is evaluated and the complete expression produces `VNumber 2`.
+Evaluating `Var "x"` looks up `x` and returns `VNumber 10`.
+
+Only variable expressions inspect the environment directly, but the evaluator passes the environment through every recursive call so that variables can appear anywhere an expression is expected.
+
+VAR does not change the environment during evaluation. Programs can refer to predefined names, but they cannot introduce new names themselves.
 
 ## Tiny Interpreters
 
-IF is part of [Tiny Interpreters](https://blog.tinyinterpreters.dev), a blog about learning how programming languages work by building small interpreters in Elm.
+VAR is part of [Tiny Interpreters](https://blog.tinyinterpreters.dev), a blog about learning how programming languages work by building small interpreters in Elm.
