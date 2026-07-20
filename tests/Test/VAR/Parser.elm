@@ -89,6 +89,6 @@ suite =
                 , ( "if", Nothing )
                 , ( "let", Just (Program (Var "let")) )
                 , ( "then", Nothing )
-                , ( "zero", Nothing )
+                , ( "zero", Just (Program (Var "zero")) )
                 ]
         ]

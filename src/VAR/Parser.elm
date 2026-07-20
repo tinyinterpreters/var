@@ -85,8 +85,10 @@ keywords =
     -- Remember to update this list of keywords anytime you
     -- introduce new reserved words into the language.
     --
+    -- Since zero? is not a valid identifier we don't need
+    -- to include it in this list.
+    --
     [ "else"
     , "if"
     , "then"
-    , "zero"
     ]
