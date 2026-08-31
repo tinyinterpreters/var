@@ -8,13 +8,13 @@ Read [VAR: Adding Variables and Environments to a Tiny Interpreter in Elm](https
 
 ```mermaid
 flowchart TD
-    A["x"] -->|parse| B["Program (Var &quot;x&quot;)"]
-    B -->|runProgram| C["VNumber 10"]
+    A["x"] -->|parse| B["Program (Var #quot;x#quot;)"]
+    B -->|evaluate| C["VNumber 10"]
 ```
 
 ## Usage
 
-You’ll need [Nix](https://zero-to-nix.com/start/install/) with flakes enabled.
+You'll need [Nix](https://zero-to-nix.com/start/install/) with flakes enabled.
 
 Enter the development environment and start the Elm REPL:
 
@@ -53,8 +53,6 @@ I.run "if zero?(-(5, v)) then i else v"
 -- Ok (VNumber 1)
 ```
 
-Only names present in the initial environment evaluate successfully. A valid identifier that is not present in the environment produces an identifier-not-found runtime error.
-
 ## Variables and environments
 
 The AST for a variable expression stores the name being referenced:
@@ -75,10 +73,12 @@ i ↦ VNumber 1
 
 Evaluating `Var "x"` looks up `x` and returns `VNumber 10`.
 
+A valid identifier that is not present in the environment produces an identifier-not-found runtime error.
+
 Only variable expressions inspect the environment directly, but the evaluator passes the environment through every recursive call so that variables can appear anywhere an expression is expected.
 
-VAR does not change the environment during evaluation. Programs can refer to predefined names, but they cannot introduce new names themselves.
+VAR does not extend the environment during evaluation. Programs can refer to predefined names, but they cannot introduce new names themselves.
 
 ## Tiny Interpreters
 
-VAR is part of [Tiny Interpreters](https://blog.tinyinterpreters.dev), a blog about learning how programming languages work by building small interpreters in Elm.
+VAR is part of [Tiny Interpreters](https://blog.tinyinterpreters.dev), where we learn how programming languages work by building tiny interpreters.
