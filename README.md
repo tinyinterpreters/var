@@ -11,9 +11,9 @@ A variable has a name, but its value comes from the environment in which it is e
 VAR starts with this environment:
 
 ```txt
-x ↦ VNumber 10
-v ↦ VNumber 5
-i ↦ VNumber 1
+x: VNumber 10
+v: VNumber 5
+i: VNumber 1
 ```
 
 Variables can also appear anywhere an expression is expected:
@@ -26,7 +26,9 @@ VAR lets programs refer to predefined names, but they cannot introduce new names
 
 For a closer look, read [VAR: Variables and Environments](https://blog.tinyinterpreters.dev/posts/var/).
 
-To try it, you'll need [Nix](https://zero-to-nix.com/start/install/) with flakes enabled.
+## Try it
+
+You'll need [Nix](https://nixos.org/) with flakes enabled.
 
 ```bash
 nix develop
